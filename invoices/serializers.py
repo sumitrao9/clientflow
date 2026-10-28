@@ -1,4 +1,3 @@
-from django.db.models import Sum
 from rest_framework import serializers
 
 from invoices.models import Invoice, InvoiceLine, Payment

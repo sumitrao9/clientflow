@@ -8,7 +8,6 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from accounts.models import Client
 from accounts.permissions import IsOwner
 from config.exceptions import error_response
 from invoices.models import Invoice, Payment

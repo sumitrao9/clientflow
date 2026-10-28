@@ -1,11 +1,11 @@
 from django.db.models import Q
-from rest_framework import serializers, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from accounts.models import Client, TimeEntry
 from accounts.permissions import IsOwner
+from accounts.serializers import TimeEntrySerializer
 from projects.models import Project
 from projects.serializers import ProjectSerializer
 

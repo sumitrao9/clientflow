@@ -100,12 +100,14 @@ class Command(BaseCommand):
         if created:
             user.set_password("demo-pass-1234")
             user.save()
-            self.stdout.write(self.style.SUCCESS(f"Created user '{user.username}' (demo-pass-1234)"))
+            self.stdout.write(
+                self.style.SUCCESS(f"Created user '{user.username}' (demo-pass-1234)")
+            )
         else:
             self.stdout.write(f"Reusing user '{user.username}'")
 
         clients = []
-        for name, contact, email, status, rate in CLIENTS:
+        for name, _contact, email, status, rate in CLIENTS:
             client, _ = Client.objects.get_or_create(
                 owner=user,
                 name=name,
@@ -158,7 +160,11 @@ class Command(BaseCommand):
 
         invoices = []
         for client in clients:
-            for issued_days_ago, status in [(62, Invoice.Status.PAID), (34, Invoice.Status.PAID), (12, Invoice.Status.SENT)]:
+            for issued_days_ago, status in [
+                (62, Invoice.Status.PAID),
+                (34, Invoice.Status.PAID),
+                (12, Invoice.Status.SENT),
+            ]:
                 invoice = Invoice.objects.create(
                     owner=user,
                     client=client,
@@ -166,7 +172,7 @@ class Command(BaseCommand):
                     status=status,
                     issued_on=timezone.localdate() - timedelta(days=issued_days_ago),
                     due_on=timezone.localdate() - timedelta(days=issued_days_ago - 14),
-                    tax_rate=Decimal("0"),
+                    tax_rate=Decimal(0),
                 )
                 for _ in range(rng.randint(2, 5)):
                     hours = Decimal(str(round(rng.uniform(1, 8), 2)))

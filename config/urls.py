@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import include, path
-from django.views.decorators.cache import never_cache
 from drf_spectacular.utils import extend_schema
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter

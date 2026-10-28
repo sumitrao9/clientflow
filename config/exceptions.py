@@ -59,7 +59,10 @@ def api_exception_handler(exc, context):
         )
 
     if isinstance(exc, DjangoPermissionDenied):
-        return _envelope("permission_denied", str(exc) or "Permission denied.", status_code=status.HTTP_403_FORBIDDEN)
+        return _envelope(
+            "permission_denied", str(exc) or "Permission denied.",
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
 
     if isinstance(exc, Http404):
         return _envelope("not_found", "Resource not found.", status_code=status.HTTP_404_NOT_FOUND)

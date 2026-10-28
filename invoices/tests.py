@@ -163,10 +163,10 @@ class InvoiceMoneyTests(ApiTestCase):
             owner=self.user,
             client=self.client_acme,
             due_on=timezone.localdate(),
-            tax_rate=Decimal("18"),
-            discount=Decimal("100"),
+            tax_rate=Decimal(18),
+            discount=Decimal(100),
         )
-        invoice.lines.create(description="Build", quantity=Decimal("10"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Build", quantity=Decimal(10), unit_price=Decimal(100))
         invoice.refresh_from_db()
         self.assertEqual(invoice.subtotal, Decimal("1000.00"))
         self.assertEqual(invoice.tax_amount, Decimal("162.00"))  # (1000 - 100) * 18%
@@ -177,10 +177,10 @@ class InvoiceMoneyTests(ApiTestCase):
             owner=self.user,
             client=self.client_acme,
             due_on=timezone.localdate(),
-            tax_rate=Decimal("18"),
-            discount=Decimal("5000"),
+            tax_rate=Decimal(18),
+            discount=Decimal(5000),
         )
-        invoice.lines.create(description="Build", quantity=Decimal("1"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Build", quantity=Decimal(1), unit_price=Decimal(100))
         invoice.refresh_from_db()
         self.assertEqual(invoice.tax_amount, Decimal("0.00"))
         self.assertEqual(invoice.total, Decimal("0.00"))
@@ -189,7 +189,7 @@ class InvoiceMoneyTests(ApiTestCase):
         invoice = Invoice.objects.create(
             owner=self.user, client=self.client_acme, due_on=timezone.localdate()
         )
-        invoice.lines.create(description="Work", quantity=Decimal("5"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Work", quantity=Decimal(5), unit_price=Decimal(100))
         invoice.refresh_from_db()
         self.assertEqual(invoice.total, Decimal("500.00"))
 
@@ -205,7 +205,7 @@ class InvoiceMoneyTests(ApiTestCase):
             status=Invoice.Status.SENT,
             due_on=timezone.localdate(),
         )
-        invoice.lines.create(description="Work", quantity=Decimal("5"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Work", quantity=Decimal(5), unit_price=Decimal(100))
         invoice.refresh_from_db()
         Payment.objects.create(invoice=invoice, amount=Decimal("200.00"))
         invoice.refresh_from_db()
@@ -217,7 +217,7 @@ class InvoiceMoneyTests(ApiTestCase):
         invoice = Invoice.objects.create(
             owner=self.user, client=self.client_acme, due_on=timezone.localdate()
         )
-        invoice.lines.create(description="Work", quantity=Decimal("1"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Work", quantity=Decimal(1), unit_price=Decimal(100))
         invoice.refresh_from_db()
         Payment.objects.create(invoice=invoice, amount=Decimal("250.00"))
         invoice.refresh_from_db()
@@ -229,7 +229,7 @@ class InvoiceMoneyTests(ApiTestCase):
         invoice = Invoice.objects.create(
             owner=self.user, client=self.client_acme, due_on=timezone.localdate()
         )
-        invoice.lines.create(description="Work", quantity=Decimal("1"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Work", quantity=Decimal(1), unit_price=Decimal(100))
         invoice.refresh_from_db()
         invoice.mark_paid()
         with self.assertRaises(ValueError):
@@ -239,7 +239,7 @@ class InvoiceMoneyTests(ApiTestCase):
         invoice = Invoice.objects.create(
             owner=self.user, client=self.client_acme, due_on=timezone.localdate()
         )
-        invoice.lines.create(description="Work", quantity=Decimal("1"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Work", quantity=Decimal(1), unit_price=Decimal(100))
         res = self.client.post(
             f"/api/invoices/{invoice.id}/payments/", {"amount": "5000"}, format="json"
         )
@@ -250,7 +250,7 @@ class InvoiceMoneyTests(ApiTestCase):
         invoice = Invoice.objects.create(
             owner=self.user, client=self.client_acme, due_on=timezone.localdate()
         )
-        invoice.lines.create(description="Work", quantity=Decimal("1"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Work", quantity=Decimal(1), unit_price=Decimal(100))
         res = self.client.post(f"/api/invoices/{invoice.id}/payments/", {"amount": "0"}, format="json")
         self.assertEqual(res.status_code, 400)
 
@@ -261,7 +261,7 @@ class InvoiceMoneyTests(ApiTestCase):
             status=Invoice.Status.SENT,
             due_on=timezone.localdate() - timedelta(days=10),
         )
-        invoice.lines.create(description="Work", quantity=Decimal("1"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Work", quantity=Decimal(1), unit_price=Decimal(100))
         invoice.refresh_from_db()
         self.assertTrue(invoice.is_overdue)
         self.assertEqual(invoice.days_overdue, 10)
@@ -270,7 +270,7 @@ class InvoiceMoneyTests(ApiTestCase):
         invoice = Invoice.objects.create(
             owner=self.user, client=self.client_acme, due_on=timezone.localdate()
         )
-        invoice.lines.create(description="Work", quantity=Decimal("1"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Work", quantity=Decimal(1), unit_price=Decimal(100))
         invoice.refresh_from_db()
         invoice.mark_paid()
         res = self.client.patch(
@@ -294,7 +294,7 @@ class TimeEntryTests(ApiTestCase):
 
     def test_rate_defaults_to_client_rate(self):
         entry = TimeEntry.objects.create(
-            owner=self.user, client=self.client_acme, description="Work", hours=Decimal("2")
+            owner=self.user, client=self.client_acme, description="Work", hours=Decimal(2)
         )
         self.assertEqual(entry.hourly_rate, Decimal("80.00"))
         self.assertEqual(entry.amount, 160)
@@ -337,7 +337,7 @@ class TimeEntryTests(ApiTestCase):
 
     def test_project_budget_burndown(self):
         TimeEntry.objects.create(
-            owner=self.user, client=self.client_acme, project=self.project, description="Work", hours=Decimal("5")
+            owner=self.user, client=self.client_acme, project=self.project, description="Work", hours=Decimal(5)
         )
         self.project.budget = Decimal("300.00")
         self.project.save()
@@ -355,7 +355,7 @@ class GenerateInvoiceTests(ApiTestCase):
                 owner=self.user,
                 client=self.client_acme,
                 description=f"Task {i}",
-                hours=Decimal("2"),
+                hours=Decimal(2),
             )
 
     def test_generate_consumes_unbilled_time(self):
@@ -389,7 +389,7 @@ class GenerateInvoiceTests(ApiTestCase):
         invoice = Invoice.objects.create(
             owner=self.user, client=self.client_acme, due_on=timezone.localdate()
         )
-        invoice.lines.create(description="Build", quantity=Decimal("2"), unit_price=Decimal("100"))
+        invoice.lines.create(description="Build", quantity=Decimal(2), unit_price=Decimal(100))
         res = self.client.get(f"/api/invoices/{invoice.id}/pdf/")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res["Content-Type"], "application/pdf")

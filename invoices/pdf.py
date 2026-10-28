@@ -175,7 +175,7 @@ def render_invoice_pdf(invoice) -> bytes:
     totals.append(["Balance due", _money(invoice.balance_due, cur)])
 
     rendered = []
-    for idx, (label, value) in enumerate(totals):
+    for _idx, (label, value) in enumerate(totals):
         style = S_TOTAL if label in {"Total", "Balance due"} else S_MUTED_RIGHT
         rendered.append([Paragraph(label, style), Paragraph(value, style)])
 

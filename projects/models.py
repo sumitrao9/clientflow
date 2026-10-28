@@ -1,7 +1,7 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from accounts.models import Client, TimeEntry, User
+from accounts.models import Client, User
 
 
 class Project(models.Model):
