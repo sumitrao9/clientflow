@@ -2,6 +2,11 @@
 
 **A REST API for freelance client management, time tracking, and invoicing.**
 
+[![CI](https://github.com/sumitrao9/clientflow/actions/workflows/ci.yml/badge.svg)](https://github.com/sumitrao9/clientflow/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Python](https://img.shields.io/badge/python-3.12-blue)
+![Django](https://img.shields.io/badge/Django-5-092e20)
+
 Most freelancers track hours in a spreadsheet and invoice from a template. This is the API
 underneath a real replacement: log time against clients and projects, generate an invoice from
 unbilled hours, send it, and record payments — with the money maths enforced server-side so the
