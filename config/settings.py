@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     # local
     "accounts",
     "clients",
-    "projects",
     "invoices",
 ]
 
