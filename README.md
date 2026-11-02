@@ -178,3 +178,9 @@ seconds and needs no external services when using SQLite.
 ## Licence
 
 MIT
+
+## Deployment
+
+Ready to deploy on [Render](https://render.com/) or [Railway](https://railway.app/). This repo includes `Dockerfile`, `render.yaml`, and `docker-compose.yml`.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
