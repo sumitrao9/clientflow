@@ -1,4 +1,4 @@
-"""Django settings for ClientFlow."""
+"""Django settings for ClientFlow - Hound-Level Production Ready."""
 
 import os
 from datetime import timedelta
@@ -22,9 +22,6 @@ def env_bool(key: str, default: bool = False) -> bool:
 SECRET_KEY = env("DJANGO_SECRET_KEY", "dev-only-insecure-key-change-me")
 DEBUG = env_bool("DJANGO_DEBUG", True)
 
-# Refuse to serve a real deployment with the bundled development key, and refuse
-# to serve debug pages to anyone. Both are the two mistakes that turn a forgot-to-
-# set-an-env-var into an incident.
 if not DEBUG and SECRET_KEY == "dev-only-insecure-key-change-me":
     raise RuntimeError(
         "DJANGO_SECRET_KEY must be set to a unique random value when DJANGO_DEBUG is off."
@@ -62,6 +59,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # ClientFlow Hound-Level Middleware
+    "clientflow.middleware.SecurityHeadersMiddleware",
+    "clientflow.middleware.RateLimitMiddleware",
+    "clientflow.middleware.BudgetTrackingMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -124,6 +125,15 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_CLASSES": (
         "rest_framework.throttling.ScopedRateThrottle",
     ),
+    # Hound-level: API Budget tracking
+    "DEFAULT_RENDERER_CLASSES": (
+        "rest_framework.renderers.JSONRenderer",
+    ),
+    "DEFAULT_PARSER_CLASSES": (
+        "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.MultiPartParser",
+        "rest_framework.parsers.FormParser",
+    ),
 }
 
 SIMPLE_JWT = {
@@ -152,6 +162,70 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Security switches - flipped on automatically once DEBUG is off.
+if not DEBUG:
+    SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", True)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = int(env("SECURE_HSTS_SECONDS", "31536000"))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    X_FRAME_OPTIONS = "DENY"
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# ClientFlow Hound-Level Configuration
+CLIENTFLOW_CONFIG = {
+    # Token Budget Configuration
+    "TOKEN_BUDGET": {
+        "DEFAULT_BUDGET": 1200,
+        "MAX_BUDGET": 20000,
+        "ADAPTIVE_LEARNING": True,
+        "LEARNING_RATE": 0.1,
+    },
+    # Rate Limiting
+    "RATE_LIMITS": {
+        "default": (100, 60),    # 100 req/min
+        "api": (200, 60),        # 200 req/min
+        "auth": (10, 60),        # 10 req/min
+        "webhook": (50, 60),     # 50 req/min
+    },
+    # Semantic Diff
+    "SEMANTIC_DIFF": {
+        "DOMAIN": "invoicing",
+        "FINANCIAL_AWARE": True,
+    },
+    # Healing
+    "HEALING": {
+        "ENABLED": True,
+        "CROSS_PROJECT": True,
+        "MIN_CONFIDENCE": 0.55,
+    },
+    # Token Optimization
+    "TOKEN_OPTIMIZER": {
+        "ENABLED": True,
+        "LEARNING_RATE": 0.1,
+    },
+    # Cross-Project Knowledge
+    "CROSS_PROJECT_KB": {
+        "ENABLED": True,
+        "PROJECT_TYPE": "django",
+    },
+    # Rate Limiting
+    "RATE_LIMITER": {
+        "ENABLED": True,
+        "DEFAULT_LIMIT": (100, 60),
+    },
+    # Timeouts
+    "TIMEOUTS": {
+        "NAVIGATION": 30.0,
+        "ELEMENT_ACTION": 10.0,
+        "SNAPSHOT": 10.0,
+        "HEALING": 15.0,
+        "API_REQUEST": 30.0,
+    },
+}
 
 # Security switches - flipped on automatically once DEBUG is off.
 if not DEBUG:
