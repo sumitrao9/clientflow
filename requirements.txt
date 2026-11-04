@@ -8,7 +8,7 @@ reportlab>=4.0
 gunicorn>=22.0
 whitenoise>=6.7
 python-dotenv>=1.0
-psycopg2-binary>=2.9
+psycopg2-binary>=2.9.13
 
 # Shared infrastructure (Hound-level)
 requests>=2.31
