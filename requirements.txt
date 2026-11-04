@@ -19,4 +19,4 @@ requests>=2.31
 pytest>=8.0
 pytest-django>=4.8
 pytest-asyncio>=0.23
-pytest-cov>=4.1
+pytest-cov>=7.1.0
